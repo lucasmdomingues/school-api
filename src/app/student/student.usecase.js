@@ -15,24 +15,24 @@ export class StudentUsecase {
     return student;
   }
 
-  async show(id) {
-    const student = await this.repository.show(id);
+  async findByID(id) {
+    const student = await this.repository.findByID(id);
 
     return student;
   }
 
-  async put(data, id) {
-    const student = await this.show(id);
+  async update(data, id) {
+    const student = await this.findByID(id);
 
     if (!student) throw new Error('student not found');
 
-    await this.repository.put(student, data);
+    await this.repository.update(student, data);
 
     return student;
   }
 
   async delete(id) {
-    const student = await this.show(id);
+    const student = await this.findByID(id);
 
     if (!student) throw new Error('student not found');
 

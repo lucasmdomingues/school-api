@@ -11,11 +11,17 @@ export class UserController {
 
       return res.status(201).json(user);
     } catch (e) {
-      if (e.errors) {
-        throw new AppError('error on store user (1.0)', e.errors.map((err) => err.message), 400);
+      const { message, errors } = e;
+
+      if (message === 'user already exists') {
+        throw new AppError('error on store user (1.0)', message, 400);
       }
 
-      throw new AppError('error on store user (1.1)', e.message);
+      if (errors) {
+        throw new AppError('error on store user (1.1)', errors.map((err) => err.message), 400);
+      }
+
+      throw new AppError('error on store user (1.2)', message);
     }
   }
 
@@ -29,15 +35,15 @@ export class UserController {
     }
   }
 
-  async show(req, res) {
-    const { id } = req.params;
-
-    if (!id) {
-      throw new Error('user id cannot be empty');
-    }
+  async findByID(req, res) {
+    const { id } = req.user;
 
     try {
-      const user = await this.usecase.show(id);
+      if (!id || isNaN(id)) {
+        throw new Error('user id cannot be empty');
+      }
+
+      const user = await this.usecase.findByID(id);
 
       if (!user) {
         throw new Error('user not found');
@@ -45,63 +51,69 @@ export class UserController {
 
       return res.json(user);
     } catch (e) {
-      if (e.message === 'user id cannot be empty') {
-        return AppError('error on put user (1.0)', e.message, 400);
+      const { message } = e;
+
+      if (message === 'user id cannot be empty') {
+        return AppError('error on find user by id (1.0)', message, 400);
       }
 
-      if (e.message === 'user not found') {
-        throw new AppError('error on put user (1.1)', e.message, 404);
+      if (message === 'user not found') {
+        throw new AppError('error on find user by id (1.1)', message, 404);
       }
 
-      throw new AppError('error on show user (1.2)', e.message);
+      throw new AppError('error on find user by id (1.2)', message);
     }
   }
 
-  async put(req, res) {
+  async update(req, res) {
     const { id } = req.user;
 
-    if (!id) {
-      throw new Error('user id cannot be empty');
-    }
-
     try {
-      const user = await this.usecase.put(req.body, id);
+      if (!id || isNaN(id)) {
+        throw new Error('user id cannot be empty');
+      }
+
+      const user = await this.usecase.update(req.body, id);
 
       return res.json(user);
     } catch (e) {
-      if (e.message === 'user id cannot be empty') {
-        throw new AppError('error on put user (1.0)', e.message, 400);
+      const { message } = e;
+
+      if (message === 'user id cannot be empty') {
+        throw new AppError('error on update user (1.0)', message, 400);
       }
 
-      if (e.message === 'user not found') {
-        throw new AppError('error on put user (1.1)', e.message, 404);
+      if (message === 'user not found') {
+        throw new AppError('error on update user (1.1)', message, 404);
       }
 
-      throw new AppError('error on put user (1.2)', e.message);
+      throw new AppError('error on update user (1.2)', message);
     }
   }
 
   async delete(req, res) {
     const { id } = req.user;
 
-    if (!id) {
-      throw new Error('user id cannot be empty');
-    }
-
     try {
+      if (!id || isNaN(id)) {
+        throw new Error('user id cannot be empty');
+      }
+
       await this.usecase.delete(id);
 
       return res.status(204).send();
     } catch (e) {
-      if (e.message === 'user id cannot be empty') {
-        throw new AppError('error on put user (1.0)', e.message, 400);
+      const { message } = e;
+
+      if (message === 'user id cannot be empty') {
+        throw new AppError('error on delete user (1.0)', message, 400);
       }
 
-      if (e.message === 'user not found') {
-        throw new AppError('error on delete user (1.1)', e.message, 404);
+      if (message === 'user not found') {
+        throw new AppError('error on delete user (1.1)', message, 404);
       }
 
-      throw new AppError('error on delete user (1.2)', e.message);
+      throw new AppError('error on delete user (1.2)', message);
     }
   }
 }

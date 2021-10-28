@@ -5,7 +5,7 @@ export class PhotoUsecase {
   }
 
   async store(file, studentID) {
-    const student = await this.studentUsecase.show(studentID);
+    const student = await this.studentUsecase.findByID(studentID);
 
     if (!student) throw new Error('student not found');
 

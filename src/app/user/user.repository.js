@@ -13,13 +13,13 @@ export class UserRepository {
     return users;
   }
 
-  async show(id) {
+  async findByID(id) {
     const user = await User.findByPk(id);
 
     return user;
   }
 
-  async put(user, data) {
+  async update(user, data) {
     await user.update(data);
 
     return user;

@@ -8,15 +8,15 @@ export class AuthController {
   async signin(req, res) {
     const { email, password } = req.body;
 
-    if (!email) {
-      throw new Error('email cannot be empty');
-    }
-
-    if (!password) {
-      throw new Error('password cannot be empty');
-    }
-
     try {
+      if (!email) {
+        throw new Error('email cannot be empty');
+      }
+
+      if (!password) {
+        throw new Error('password cannot be empty');
+      }
+
       const token = await this.usecase.signin(email, password);
 
       return res.json({ token });

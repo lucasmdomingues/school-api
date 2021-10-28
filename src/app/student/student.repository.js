@@ -21,7 +21,7 @@ export class StudentRepository {
     return students;
   }
 
-  async show(id) {
+  async findByID(id) {
     const student = await Student.findByPk(id, {
       include: {
         model: Photo,
@@ -33,7 +33,7 @@ export class StudentRepository {
     return student;
   }
 
-  async put(student, data) {
+  async update(student, data) {
     await student.update(data);
 
     return student;

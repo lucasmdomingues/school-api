@@ -12,9 +12,8 @@ export class UserRouter {
     const { router, controller } = this;
 
     router.post('/', (req, res) => controller.store(req, res));
-    router.get('/', authMiddleware, (req, res) => controller.index(req, res));
-    router.get('/:id', authMiddleware, (req, res) => controller.show(req, res));
-    router.put('/', authMiddleware, (req, res) => controller.put(req, res));
+    router.get('/', authMiddleware, (req, res) => controller.findByID(req, res));
+    router.put('/', authMiddleware, (req, res) => controller.update(req, res));
     router.delete('/', authMiddleware, (req, res) => controller.delete(req, res));
 
     return router;

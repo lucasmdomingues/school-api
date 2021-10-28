@@ -10,29 +10,39 @@ export class UserUsecase {
   }
 
   async store(data) {
+    const userAlreadyExists = await this.findByEmail(data.email);
+
+    if (userAlreadyExists) throw new Error('user already exists');
+
     const user = await this.repository.store(data);
 
     return user;
   }
 
-  async show(id) {
-    const user = await this.repository.show(id);
+  async findByID(id) {
+    const user = await this.repository.findByID(id);
 
     return user;
   }
 
-  async put(data, id) {
-    const user = await this.show(id);
+  async update(data, id) {
+    const user = await this.findByID(id);
 
     if (!user) throw new Error('user not found');
 
-    await this.repository.put(user, data);
+    if (user.email !== data.email) {
+      const userAlreadyExists = await this.findByEmail(data.email);
+
+      if (userAlreadyExists) throw new Error('user already exists');
+    }
+
+    await this.repository.update(user, data);
 
     return user;
   }
 
   async delete(id) {
-    const user = await this.show(id);
+    const user = await this.findByID(id);
 
     if (!user) throw new Error('user not found');
 
